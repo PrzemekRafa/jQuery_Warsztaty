@@ -4,13 +4,16 @@
 
 $( document ).ready( function() {
 
+    
+//    ZMIENNE
     var slider = $('#slider');
     console.log(slider);
 
-    var slideShow = $('.slide-show');
+    var slideShow = $('#slider .slide-show');
     console.log(slideShow);
 
-    var slideCount = $('.slide-show').find('.single-slide').length;
+//    var slideCount = $('.slide-show').find('.single-slide').length;
+    var slideCount = slideShow.children().length;
     console.log(slideCount);
 
     var slideWidth = 100 / slideCount;
@@ -18,19 +21,52 @@ $( document ).ready( function() {
 
     var slideIndex = 0;
 
-    $('.slide-show').css('width', slideCount * 100+'%');
+//    USTAWIENIE SZEROKOSCI KONTENERA
+//    $('.slide-show').css('width', slideCount * 100+'%');
+    slideShow.css('width', slideCount * 100+'%');
     
-    function slide() {
-        $('.slide-show').find('.single-slide').each(function (){
-            $('.sigle-slide').css({
-                'margin-left': slideWidth * slideIndex,
-                'width': 100 / slideCount + '%',
-            })
-        })        
-    }
+//    USTAWIENIE MARGINESOW i SZEROKOSCI DLA SLAJDOW
+    slideShow.find('.single-slide').each(function (index){
+        var leftPercent = (slideWidth * index) + '%';
+        $(this).css('margin-left', leftPercent);
+        $(this).css('width', slideWidth + '%');
+    });
     
-    $('slider-arrows').click('next-slide')
-} );
+//    WYWOLANIE FUNKCJI SLIDE NA CLICK
+    $('.prev-slide').click(function(event){
+        event.preventDefault();
+        slide(slideIndex - 1);
+    });
+    
+    $('.next-slide').click(function(event){
+        event.preventDefault();
+        slide(slideIndex + 1);
+    });
+        
+//    DEFINICJA FUNKCJI SLIDE    
+    function slide (newSlideIndex) {
+        if (newSlideIndex < 0 || newSlideIndex >= slideCount) {
+            return;
+        }
+        
+//        ELEMENTY SLIDECAPTION I PRZYPISANA DO NICH ZMIENNA
+        var slideCaption = slider.find('.slider-caption').eq(newSlideIndex);
+        
+//        UKRYWANIE NAPISU
+        slideCaption.hide();
+        
+//        ZMIENNA TRZYMAJACA MARGINES LEWY DO PRZESUWANIA KONTENERA
+        var marginLeft = (newSlideIndex * (-100)) +'%';
+        
+//        ANIMACJA NA SLIDESHOW
+        slideShow.animate({'margin-left': marginLeft}, 800, function() {
+            slideIndex = newSlideIndex;
+            slideCaption.fadeIn('slow');
+        });
+    };
+    
+    
+});
 
 //jQuery
 //
